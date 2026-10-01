@@ -1,4 +1,4 @@
-export default function template(monsters) {
+export default function template(monsters, count) {
   return `
     <header class="text-center mb-10">
       <p class="text-[var(--silver)] tracking-widest text-sm">
@@ -25,14 +25,14 @@ export default function template(monsters) {
           Name
           <input
             type="text"
-            class="field"
+            class="input-name field"
             placeholder="The Crawling Mass"
           />
         </label>
 
         <label class="block mb-4 text-[var(--silver)]">
           Type
-          <select class="field">
+          <select class="input-type field">
             <option>Giant reptile</option>
             <option>Alien</option>
             <option>Mutant</option>
@@ -48,7 +48,7 @@ export default function template(monsters) {
             type="number"
             min="1"
             max="5"
-            class="field"
+            class="input-danger field"
             placeholder="3"
           />
         </label>
@@ -59,12 +59,12 @@ export default function template(monsters) {
             type="number"
             min="1950"
             max="1969"
-            class="field"
+            class="input-year field"
             placeholder="1957"
           />
         </label>
 
-        <button class="btn btn-lipstick w-full py-3 px-4 text-lg">
+        <button class="btn-add btn btn-lipstick w-full py-3 px-4 text-lg">
           Add to the archive
         </button>
       </aside>
@@ -77,7 +77,7 @@ export default function template(monsters) {
           <p class="text-[var(--silver)]">
             Creatures on file :
             <span class="display text-2xl text-[var(--gold)]">
-              xxx
+              ${count}
             </span>
           </p>
         </div>
