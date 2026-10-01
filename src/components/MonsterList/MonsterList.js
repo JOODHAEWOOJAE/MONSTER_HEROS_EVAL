@@ -6,11 +6,14 @@ export default class MonsterList {
   constructor(monsters) {
     this.monsters = monsters
     this.db = new DB()
+    this.monsterComponents = this.monsters.map(
+      monster => new Monster(monster)
+    )
   }
 
   render() {
-    const monstersHTML = this.monsters
-      .map(monster => new Monster(monster).render())
+    const monstersHTML = this.monsterComponents
+      .map(monster => monster.render())
       .join('')
 
     return template(monstersHTML, this.monsters.length)
@@ -22,9 +25,11 @@ export default class MonsterList {
     btnAdd.addEventListener('click', async () => {
       const name = document.querySelector('.input-name').value
       const type = document.querySelector('.input-type').value
+
       const dangerLevel = Number(
         document.querySelector('.input-danger').value
       )
+
       const year = Number(
         document.querySelector('.input-year').value
       )
@@ -39,6 +44,10 @@ export default class MonsterList {
       await this.db.store(monster)
 
       window.location.reload()
+    })
+
+    this.monsterComponents.forEach(monster => {
+      monster.init()
     })
   }
 }
