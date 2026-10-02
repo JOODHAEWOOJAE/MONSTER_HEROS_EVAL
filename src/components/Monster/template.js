@@ -1,6 +1,10 @@
 export default function template(monster) {
   return `
-    <tr class="monster-row" data-id="${monster.id}" data-name="${monster.name}" data-type="${monster.type}">
+    <tr class="monster-row" 
+      data-id="${monster.id}" 
+      data-name="${monster.name}" 
+      data-type="${monster.type}"
+    >
 
       <td class="p-3 font-semibold">
         <span class="isEditing-hidden">${monster.name}</span>
@@ -47,7 +51,7 @@ export default function template(monster) {
           class="isEditing-hidden"
           title="Danger level ${monster.dangerLevel}"
         >
-          ${monster.dangerLevel}
+          ${'☠️'.repeat(monster.dangerLevel)}
         </span>
 
         <input
