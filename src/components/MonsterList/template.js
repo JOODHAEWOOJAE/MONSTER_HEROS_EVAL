@@ -84,7 +84,7 @@ export default function template(monsters, count) {
 
         <input
           type="search"
-          class="field mb-5"
+          class="input-search field mb-5"
           placeholder="Search by name or type"
         />
 

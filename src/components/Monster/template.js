@@ -1,6 +1,6 @@
 export default function template(monster) {
   return `
-    <tr class="monster-row" data-id="${monster.id}">
+    <tr class="monster-row" data-id="${monster.id}" data-name="${monster.name}" data-type="${monster.type}">
 
       <td class="p-3 font-semibold">
         <span class="isEditing-hidden">${monster.name}</span>

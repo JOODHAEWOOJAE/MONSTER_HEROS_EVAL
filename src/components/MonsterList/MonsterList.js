@@ -6,6 +6,7 @@ export default class MonsterList {
   constructor(monsters) {
     this.monsters = monsters
     this.db = new DB()
+
     this.monsterComponents = this.monsters.map(
       monster => new Monster(monster)
     )
@@ -21,6 +22,7 @@ export default class MonsterList {
 
   init() {
     const btnAdd = document.querySelector('.btn-add')
+    const inputSearch = document.querySelector('.input-search')
 
     btnAdd.addEventListener('click', async () => {
       const name = document.querySelector('.input-name').value
@@ -44,6 +46,21 @@ export default class MonsterList {
       await this.db.store(monster)
 
       window.location.reload()
+    })
+
+    inputSearch.addEventListener('input', () => {
+      const search = inputSearch.value.toLowerCase()
+
+      document.querySelectorAll('.monster-row').forEach(row => {
+        const name = row.dataset.name.toLowerCase()
+        const type = row.dataset.type.toLowerCase()
+
+        if (name.includes(search) || type.includes(search)) {
+          row.style.display = ''
+        } else {
+          row.style.display = 'none'
+        }
+      })
     })
 
     this.monsterComponents.forEach(monster => {
