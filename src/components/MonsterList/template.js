@@ -92,10 +92,22 @@ export default function template(monsters, count) {
           <table class="monsters-table w-full">
             <thead>
               <tr>
-                <th class="text-left p-3"><a href="#">Name</a></th>
-                <th class="text-left p-3"><a href="#">Type</a></th>
-                <th class="text-left p-3"><a href="#">Danger</a></th>
-                <th class="text-left p-3"><a href="#">Year</a></th>
+                <th class="text-left p-3">
+                  <a href="#" data-sort="name">Name</a>
+                </th>
+
+                <th class="text-left p-3">
+                  <a href="#" data-sort="type">Type</a>
+                </th>
+
+                <th class="text-left p-3">
+                  <a href="#" data-sort="dangerLevel">Danger</a>
+                </th>
+
+                <th class="text-left p-3">
+                  <a href="#" data-sort="year">Year</a>
+                </th>
+
                 <th class="text-right p-3">Actions</th>
               </tr>
             </thead>

@@ -6,6 +6,7 @@ export default class MonsterList {
   constructor(monsters) {
     this.monsters = monsters
     this.db = new DB()
+    this.sortAscending = true
 
     this.monsterComponents = this.monsters.map(
       monster => new Monster(monster)
@@ -60,6 +61,36 @@ export default class MonsterList {
         } else {
           row.style.display = 'none'
         }
+      })
+    })
+
+    const sortLinks = document.querySelectorAll('[data-sort]')
+
+    sortLinks.forEach(link => {
+      link.addEventListener('click', event => {
+        event.preventDefault()
+
+        const sortBy = link.dataset.sort
+
+        this.monsters.sort((a, b) => {
+          if (this.sortAscending) {
+            return a[sortBy] > b[sortBy] ? 1 : -1
+          } else {
+            return a[sortBy] < b[sortBy] ? 1 : -1
+          }
+        })
+
+        this.sortAscending = !this.sortAscending
+
+        const tbody = document.querySelector('.monsters-table tbody')
+
+        this.monsters.forEach(monster => {
+          const row = document.querySelector(
+            `.monster-row[data-id="${monster.id}"]`
+          )
+
+          tbody.appendChild(row)
+        })
       })
     })
 
