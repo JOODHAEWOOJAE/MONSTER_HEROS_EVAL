@@ -29,4 +29,16 @@ export default class DB {
 
         return await response.json()
     }
+
+    async update(id, monster) {
+        const response = await fetch(`${this.url}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(monster)
+        })
+
+        return await response.json()
+    }
 }

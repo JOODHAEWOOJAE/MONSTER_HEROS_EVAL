@@ -1,18 +1,105 @@
 export default function template(monster) {
   return `
     <tr class="monster-row" data-id="${monster.id}">
-      <td class="p-3 font-semibold">${monster.name}</td>
-      <td class="p-3">${monster.type}</td>
-      <td class="p-3">${monster.dangerLevel}</td>
-      <td class="p-3">${monster.year}</td>
-      <td class="p-3 text-right">
-      <button
-        class="btn-delete btn btn-ghost px-3 py-2"
-        title="Delete"
-      >
-        <i class="fa-solid fa-trash"></i>
-      </button>
-    </td>
+
+      <td class="p-3 font-semibold">
+        <span class="isEditing-hidden">${monster.name}</span>
+
+        <input
+          type="text"
+          class="input-name isEditing-visible field"
+          value="${monster.name}"
+        />
+      </td>
+
+      <td class="p-3">
+        <span class="isEditing-hidden">${monster.type}</span>
+
+        <select class="input-type isEditing-visible field">
+          <option ${monster.type === 'Giant reptile' ? 'selected' : ''}>
+            Giant reptile
+          </option>
+
+          <option ${monster.type === 'Alien' ? 'selected' : ''}>
+            Alien
+          </option>
+
+          <option ${monster.type === 'Mutant' ? 'selected' : ''}>
+            Mutant
+          </option>
+
+          <option ${monster.type === 'Giant insect' ? 'selected' : ''}>
+            Giant insect
+          </option>
+
+          <option ${monster.type === 'Robot' ? 'selected' : ''}>
+            Robot
+          </option>
+
+          <option ${monster.type === 'Deep-sea creature' ? 'selected' : ''}>
+            Deep-sea creature
+          </option>
+        </select>
+      </td>
+
+      <td class="p-3 whitespace-nowrap">
+        <span
+          class="isEditing-hidden"
+          title="Danger level ${monster.dangerLevel}"
+        >
+          ${monster.dangerLevel}
+        </span>
+
+        <input
+          type="number"
+          min="1"
+          max="5"
+          class="input-danger isEditing-visible field"
+          value="${monster.dangerLevel}"
+        />
+      </td>
+
+      <td class="p-3">
+        <span class="isEditing-hidden">
+          ${monster.year}
+        </span>
+
+        <input
+          type="number"
+          min="1950"
+          max="1969"
+          class="input-year isEditing-visible field"
+          value="${monster.year}"
+        />
+      </td>
+
+      <td class="p-3">
+        <div class="flex justify-end gap-2">
+
+          <button
+            class="btn-check isEditing-visible btn btn-jade py-2 px-3"
+            aria-label="Save"
+          >
+            <i class="fa-solid fa-check"></i>
+          </button>
+
+          <button
+            class="btn-edit isEditing-hidden btn btn-gold py-2 px-3"
+            aria-label="Edit"
+          >
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
+
+          <button
+            class="btn-delete isEditing-hidden btn btn-lipstick py-2 px-3"
+            aria-label="Delete"
+          >
+            <i class="fa-solid fa-skull"></i>
+          </button>
+
+        </div>
+      </td>
+
     </tr>
   `
 }
