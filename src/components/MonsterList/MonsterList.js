@@ -6,13 +6,17 @@ export default class MonsterList {
   constructor(monsters) {
     this.monsters = monsters
     this.db = new DB()
+
+    // Direction du tri
     this.sortAscending = true
 
+    // Créer un composant pour chaque monstre
     this.monsterComponents = this.monsters.map(
       monster => new Monster(monster)
     )
   }
 
+  // Afficher la liste des monstres
   render() {
     const monstersHTML = this.monsterComponents
       .map(monster => monster.render())
@@ -21,10 +25,12 @@ export default class MonsterList {
     return template(monstersHTML, this.monsters.length)
   }
 
+  // Initialiser les événements du composant
   init() {
     const btnAdd = document.querySelector('.btn-add')
     const inputSearch = document.querySelector('.input-search')
 
+    // Ajouter un nouveau monstre
     btnAdd.addEventListener('click', async () => {
       const name = document.querySelector('.input-name').value
       const type = document.querySelector('.input-type').value
@@ -46,9 +52,11 @@ export default class MonsterList {
 
       await this.db.store(monster)
 
+      // Recharger la page pour afficher les nouvelles données
       window.location.reload()
     })
 
+    // Filtrer les monstres par nom ou par type
     inputSearch.addEventListener('input', () => {
       const search = inputSearch.value.toLowerCase()
 
@@ -64,6 +72,7 @@ export default class MonsterList {
       })
     })
 
+    // Trier les monstres en cliquant sur les colonnes
     const sortLinks = document.querySelectorAll('[data-sort]')
 
     sortLinks.forEach(link => {
@@ -80,10 +89,12 @@ export default class MonsterList {
           }
         })
 
+        // Inverser la direction du prochain tri
         this.sortAscending = !this.sortAscending
 
         const tbody = document.querySelector('.monsters-table tbody')
 
+        // Réorganiser les lignes du tableau
         this.monsters.forEach(monster => {
           const row = document.querySelector(
             `.monster-row[data-id="${monster.id}"]`
@@ -94,6 +105,7 @@ export default class MonsterList {
       })
     })
 
+    // Initialiser chaque composant Monster
     this.monsterComponents.forEach(monster => {
       monster.init()
     })
