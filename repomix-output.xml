@@ -58,7 +58,6 @@ src/
 .gitignore
 index.html
 package.json
-public.zip
 </directory_structure>
 
 <files>
