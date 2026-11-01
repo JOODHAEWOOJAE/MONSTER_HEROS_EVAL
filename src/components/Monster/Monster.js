@@ -2,8 +2,10 @@ import template from './template.js'
 import DB from '../../services/DB.js'
 
 export default class Monster {
-  constructor(monster) {
+  constructor(monster, monsters, onDelete) {
     this.monster = monster
+    this.monsters = monsters
+    this.onDelete = onDelete
     this.db = new DB()
   }
 
@@ -67,6 +69,15 @@ export default class Monster {
       // Mettre à jour les données du composant
       this.monster = updatedMonster
 
+      // Mettre à jour le monstre dans le tableau
+      const index = this.monsters.findIndex(
+        monster => monster.id === this.monster.id
+      )
+
+      if (index !== -1) {
+        this.monsters[index] = updatedMonster
+      }
+
       // Créer la nouvelle ligne HTML
       const newRow = document.createElement('tbody')
       newRow.innerHTML = this.render()
@@ -76,12 +87,28 @@ export default class Monster {
 
       // Réinitialiser les événements du monstre
       this.init()
+
+      // Actualiser la recherche
+      document.querySelector('.input-search')
+        .dispatchEvent(new Event('input'))
     })
 
     // Supprimer le monstre
     // Supprimer le monstre dans l'API
     btnDelete.addEventListener('click', async () => {
       await this.db.delete(this.monster.id)
+
+      // Informer la liste de la suppression
+      this.onDelete(this.monster.id)
+
+      // Supprimer le monstre du tableau
+      const index = this.monsters.findIndex(
+        monster => monster.id === this.monster.id
+      )
+
+      if (index !== -1) {
+        this.monsters.splice(index, 1)
+      }
 
       // Supprimer la ligne du tableau HTML
       row.remove()

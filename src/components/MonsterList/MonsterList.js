@@ -12,7 +12,18 @@ export default class MonsterList {
 
     // Créer un composant pour chaque monstre
     this.monsterComponents = this.monsters.map(
-      monster => new Monster(monster)
+      monster => new Monster(
+        monster,
+        this.monsters,
+        id => this.removeMonster(id)
+      )
+    )
+  }
+
+  // Supprimer un composant de la liste
+  removeMonster(id) {
+    this.monsterComponents = this.monsterComponents.filter(
+      component => component.monster.id !== id
     )
   }
 
@@ -72,7 +83,11 @@ export default class MonsterList {
       this.monsters.push(newMonster)
 
       // Créer le composant du nouveau monstre
-      const monsterComponent = new Monster(newMonster)
+      const monsterComponent = new Monster(
+        newMonster,
+        this.monsters,
+        id => this.removeMonster(id)
+      )
       this.monsterComponents.push(monsterComponent)
 
       // Ajouter sa ligne dans le tableau HTML
@@ -81,6 +96,9 @@ export default class MonsterList {
 
       // Activer les boutons Edit et Delete du nouveau monstre
       monsterComponent.init()
+
+      // Actualiser la recherche
+      inputSearch.dispatchEvent(new Event('input'))
 
       // Mettre à jour le compteur
       document.querySelector('.monster-count').textContent = this.monsters.length
