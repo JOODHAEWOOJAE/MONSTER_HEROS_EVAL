@@ -76,7 +76,7 @@ export default function template(monsters, count) {
 
           <p class="text-[var(--silver)]">
             Creatures on file :
-            <span class="display text-2xl text-[var(--gold)]">
+            <span class="monster-count display text-2xl text-[var(--gold)]">
               ${count}
             </span>
           </p>

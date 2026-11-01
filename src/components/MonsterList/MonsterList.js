@@ -50,10 +50,25 @@ export default class MonsterList {
         year
       }
 
-      await this.db.store(monster)
+      // Enregistrer le monstre dans l'API
+      const newMonster = await this.db.store(monster)
 
-      // Recharger la page pour afficher les nouvelles données
-      window.location.reload()
+      // Ajouter le monstre dans notre tableau
+      this.monsters.push(newMonster)
+
+      // Créer le composant du nouveau monstre
+      const monsterComponent = new Monster(newMonster)
+      this.monsterComponents.push(monsterComponent)
+
+      // Ajouter sa ligne dans le tableau HTML
+      const tbody = document.querySelector('.monsters-table tbody')
+      tbody.insertAdjacentHTML('beforeend', monsterComponent.render())
+
+      // Activer les boutons Edit et Delete du nouveau monstre
+      monsterComponent.init()
+
+      // Mettre à jour le compteur
+      document.querySelector('.monster-count').textContent = this.monsters.length
     })
 
     // Filtrer les monstres par nom ou par type
