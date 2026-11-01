@@ -40,6 +40,20 @@ export default class Monster {
         row.querySelector('.input-year').value
       )
 
+      if (
+        name.trim() === '' ||
+        type.trim() === '' ||
+        !Number.isInteger(dangerLevel) ||
+        dangerLevel < 1 ||
+        dangerLevel > 5 ||
+        !Number.isInteger(year) ||
+        year < 1950 ||
+        year > 1969
+      ) {
+        alert('Veuillez vérifier les données du monstre.')
+        return
+      }
+
       const monster = {
         name,
         type,
@@ -47,10 +61,21 @@ export default class Monster {
         year
       }
 
-      // Mettre à jour le monstre dans l'API
-      await this.db.update(this.monster.id, monster)
+      // Enregistrer les modifications dans l'API
+      const updatedMonster = await this.db.update(this.monster.id, monster)
 
-      window.location.reload()
+      // Mettre à jour les données du composant
+      this.monster = updatedMonster
+
+      // Créer la nouvelle ligne HTML
+      const newRow = document.createElement('tbody')
+      newRow.innerHTML = this.render()
+
+      // Remplacer l'ancienne ligne
+      row.replaceWith(newRow.firstElementChild)
+
+      // Réinitialiser les événements du monstre
+      this.init()
     })
 
     // Supprimer le monstre
