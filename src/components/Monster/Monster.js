@@ -54,10 +54,16 @@ export default class Monster {
     })
 
     // Supprimer le monstre
+    // Supprimer le monstre dans l'API
     btnDelete.addEventListener('click', async () => {
       await this.db.delete(this.monster.id)
 
-      window.location.reload()
+      // Supprimer la ligne du tableau HTML
+      row.remove()
+
+      // Mettre à jour le compteur
+      const count = document.querySelector('.monster-count')
+      count.textContent = Number(count.textContent) - 1
     })
   }
 }
