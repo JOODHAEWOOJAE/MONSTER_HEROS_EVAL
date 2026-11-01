@@ -43,6 +43,21 @@ export default class MonsterList {
         document.querySelector('.input-year').value
       )
 
+      // Vérifier les données avant l'ajout
+      if (
+        name.trim() === '' ||
+        type.trim() === '' ||
+        !Number.isInteger(dangerLevel) ||
+        dangerLevel < 1 ||
+        dangerLevel > 5 ||
+        !Number.isInteger(year) ||
+        year < 1950 ||
+        year > 1969
+      ) {
+        alert('Veuillez vérifier les données du monstre.')
+        return
+      }
+
       const monster = {
         name,
         type,
