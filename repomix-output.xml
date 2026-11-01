@@ -692,72 +692,6 @@ dist-ssr
 </html>
 </file>
 
-<file path="src/components/Monster/Monster.js">
-import template from './template.js'
-import DB from '../../services/DB.js'
-
-export default class Monster {
-  constructor(monster) {
-    this.monster = monster
-    this.db = new DB()
-  }
-
-  // Afficher un monstre
-  render() {
-    return template(this.monster)
-  }
-
-  // Initialiser les événements du composant
-  init() {
-    const row = document.querySelector(
-      `.monster-row[data-id="${this.monster.id}"]`
-    )
-
-    const btnEdit = row.querySelector('.btn-edit')
-    const btnCheck = row.querySelector('.btn-check')
-    const btnDelete = row.querySelector('.btn-delete')
-
-    // Activer le mode édition
-    btnEdit.addEventListener('click', () => {
-      row.classList.add('isEditing')
-    })
-
-    // Enregistrer les modifications du monstre
-    btnCheck.addEventListener('click', async () => {
-      const name = row.querySelector('.input-name').value
-      const type = row.querySelector('.input-type').value
-
-      const dangerLevel = Number(
-        row.querySelector('.input-danger').value
-      )
-
-      const year = Number(
-        row.querySelector('.input-year').value
-      )
-
-      const monster = {
-        name,
-        type,
-        dangerLevel,
-        year
-      }
-
-      // Mettre à jour le monstre dans l'API
-      await this.db.update(this.monster.id, monster)
-
-      window.location.reload()
-    })
-
-    // Supprimer le monstre
-    btnDelete.addEventListener('click', async () => {
-      await this.db.delete(this.monster.id)
-
-      window.location.reload()
-    })
-  }
-}
-</file>
-
 <file path="src/main.js">
 import './style.css'
 import DB from './services/DB.js'
@@ -886,6 +820,58 @@ export default function template(monster) {
 }
 </file>
 
+<file path="src/services/DB.js">
+export default class DB {
+    constructor() {
+        // URL de l'API MockAPI
+        this.url = 'https://6abe4311c4d5ac548302567e.mockapi.io/monsters'
+    }
+
+    // Récupérer tous les monstres
+    async findAll() {
+        const response = await fetch(this.url)
+        const data = await response.json()
+
+        return data
+    }
+
+    // Ajouter un nouveau monstre
+    async store(monster) {
+        const response = await fetch(this.url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(monster)
+        })
+
+        return await response.json()
+    }
+
+    // Supprimer un monstre par son ID
+    async delete(id) {
+        const response = await fetch(`${this.url}/${id}`, {
+            method: 'DELETE'
+        })
+
+        return await response.json()
+    }
+
+    // Modifier un monstre existant
+    async update(id, monster) {
+        const response = await fetch(`${this.url}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(monster)
+        })
+
+        return await response.json()
+    }
+}
+</file>
+
 <file path="src/components/MonsterList/template.js">
 export default function template(monsters, count) {
   return `
@@ -965,7 +951,7 @@ export default function template(monsters, count) {
 
           <p class="text-[var(--silver)]">
             Creatures on file :
-            <span class="display text-2xl text-[var(--gold)]">
+            <span class="monster-count display text-2xl text-[var(--gold)]">
               ${count}
             </span>
           </p>
@@ -1017,55 +1003,127 @@ export default function template(monsters, count) {
 }
 </file>
 
-<file path="src/services/DB.js">
-export default class DB {
-    constructor() {
-        // URL de l'API MockAPI
-        this.url = 'https://6abe4311c4d5ac548302567e.mockapi.io/monsters'
-    }
+<file path="src/components/Monster/Monster.js">
+import template from './template.js'
+import DB from '../../services/DB.js'
 
-    // Récupérer tous les monstres
-    async findAll() {
-        const response = await fetch(this.url)
-        const data = await response.json()
+export default class Monster {
+  constructor(monster, monsters, onDelete) {
+    this.monster = monster
+    this.monsters = monsters
+    this.onDelete = onDelete
+    this.db = new DB()
+  }
 
-        return data
-    }
+  // Afficher un monstre
+  render() {
+    return template(this.monster)
+  }
 
-    // Ajouter un nouveau monstre
-    async store(monster) {
-        const response = await fetch(this.url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(monster)
-        })
+  // Initialiser les événements du composant
+  init() {
+    const row = document.querySelector(
+      `.monster-row[data-id="${this.monster.id}"]`
+    )
 
-        return await response.json()
-    }
+    const btnEdit = row.querySelector('.btn-edit')
+    const btnCheck = row.querySelector('.btn-check')
+    const btnDelete = row.querySelector('.btn-delete')
 
-    // Supprimer un monstre par son ID
-    async delete(id) {
-        const response = await fetch(`${this.url}/${id}`, {
-            method: 'DELETE'
-        })
+    // Activer le mode édition
+    btnEdit.addEventListener('click', () => {
+      row.classList.add('isEditing')
+    })
 
-        return await response.json()
-    }
+    // Enregistrer les modifications du monstre
+    btnCheck.addEventListener('click', async () => {
+      const name = row.querySelector('.input-name').value
+      const type = row.querySelector('.input-type').value
 
-    // Modifier un monstre existant
-    async update(id, monster) {
-        const response = await fetch(`${this.url}/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(monster)
-        })
+      const dangerLevel = Number(
+        row.querySelector('.input-danger').value
+      )
 
-        return await response.json()
-    }
+      const year = Number(
+        row.querySelector('.input-year').value
+      )
+
+      if (
+        name.trim() === '' ||
+        type.trim() === '' ||
+        !Number.isInteger(dangerLevel) ||
+        dangerLevel < 1 ||
+        dangerLevel > 5 ||
+        !Number.isInteger(year) ||
+        year < 1950 ||
+        year > 1969
+      ) {
+        alert('Veuillez vérifier les données du monstre.')
+        return
+      }
+
+      const monster = {
+        name,
+        type,
+        dangerLevel,
+        year
+      }
+
+      // Enregistrer les modifications dans l'API
+      const updatedMonster = await this.db.update(this.monster.id, monster)
+
+      // Mettre à jour les données du composant
+      this.monster = updatedMonster
+
+      // Mettre à jour le monstre dans le tableau
+      const index = this.monsters.findIndex(
+        monster => monster.id === this.monster.id
+      )
+
+      if (index !== -1) {
+        this.monsters[index] = updatedMonster
+      }
+
+      // Créer la nouvelle ligne HTML
+      const newRow = document.createElement('tbody')
+      newRow.innerHTML = this.render()
+
+      // Remplacer l'ancienne ligne
+      row.replaceWith(newRow.firstElementChild)
+
+      // Réinitialiser les événements du monstre
+      this.init()
+
+      // Actualiser la recherche
+      document.querySelector('.input-search')
+        .dispatchEvent(new Event('input'))
+    })
+
+    // Supprimer le monstre
+    // Supprimer le monstre dans l'API
+    btnDelete.addEventListener('click', async () => {
+      await this.db.delete(this.monster.id)
+
+      // Informer la liste de la suppression
+      this.onDelete(this.monster.id)
+
+      // Supprimer le monstre du tableau
+      const index = this.monsters.findIndex(
+        monster => monster.id === this.monster.id
+      )
+
+      if (index !== -1) {
+        this.monsters.splice(index, 1)
+      }
+
+      // Supprimer la ligne du tableau HTML
+      row.remove()
+
+      // Mettre à jour le compteur
+      const count = document.querySelector('.monster-count')
+      count.textContent = Number(count.textContent) - 1
+    })
+  }
 }
 </file>
 
@@ -1084,7 +1142,18 @@ export default class MonsterList {
 
     // Créer un composant pour chaque monstre
     this.monsterComponents = this.monsters.map(
-      monster => new Monster(monster)
+      monster => new Monster(
+        monster,
+        this.monsters,
+        id => this.removeMonster(id)
+      )
+    )
+  }
+
+  // Supprimer un composant de la liste
+  removeMonster(id) {
+    this.monsterComponents = this.monsterComponents.filter(
+      component => component.monster.id !== id
     )
   }
 
@@ -1115,6 +1184,21 @@ export default class MonsterList {
         document.querySelector('.input-year').value
       )
 
+      // Vérifier les données avant l'ajout
+      if (
+        name.trim() === '' ||
+        type.trim() === '' ||
+        !Number.isInteger(dangerLevel) ||
+        dangerLevel < 1 ||
+        dangerLevel > 5 ||
+        !Number.isInteger(year) ||
+        year < 1950 ||
+        year > 1969
+      ) {
+        alert('Veuillez vérifier les données du monstre.')
+        return
+      }
+
       const monster = {
         name,
         type,
@@ -1122,10 +1206,32 @@ export default class MonsterList {
         year
       }
 
-      await this.db.store(monster)
+      // Enregistrer le monstre dans l'API
+      const newMonster = await this.db.store(monster)
 
-      // Recharger la page pour afficher les nouvelles données
-      window.location.reload()
+      // Ajouter le monstre dans notre tableau
+      this.monsters.push(newMonster)
+
+      // Créer le composant du nouveau monstre
+      const monsterComponent = new Monster(
+        newMonster,
+        this.monsters,
+        id => this.removeMonster(id)
+      )
+      this.monsterComponents.push(monsterComponent)
+
+      // Ajouter sa ligne dans le tableau HTML
+      const tbody = document.querySelector('.monsters-table tbody')
+      tbody.insertAdjacentHTML('beforeend', monsterComponent.render())
+
+      // Activer les boutons Edit et Delete du nouveau monstre
+      monsterComponent.init()
+
+      // Actualiser la recherche
+      inputSearch.dispatchEvent(new Event('input'))
+
+      // Mettre à jour le compteur
+      document.querySelector('.monster-count').textContent = this.monsters.length
     })
 
     // Filtrer les monstres par nom ou par type
